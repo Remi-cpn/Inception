@@ -10,7 +10,7 @@ services:
       - wordpress
     ports:
       - "443:443"
-    restart: always
+    restart: on-failure
   mariadb:
     container_name: mariadb
     build: ./requirements/mariadb
@@ -19,7 +19,7 @@ services:
     volumes:
       - mariadb:/var/lib/mysql
     env_file: .env
-    restart: always
+    restart: on-failure
   wordpress:
     container_name: wordpress
     build: ./requirements/wordpress
@@ -30,7 +30,7 @@ services:
     depends_on:
       - mariadb
     env_file: .env
-    restart: always
+    restart: on-failure
 
 networks:
   inception:
