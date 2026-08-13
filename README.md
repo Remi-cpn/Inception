@@ -1,6 +1,6 @@
-# Inception
-
 *This project has been created as part of the 42 curriculum by rcompain.*
+
+# Inception
 
 ## Description
 
@@ -59,19 +59,8 @@ Full details are available in [USER_DOC.md](USER_DOC.md) (usage) and
 ### AI usage
 
 An AI assistant (Claude) was used during this project for the following tasks:
-
-- Reviewing the existing Dockerfiles, `docker-compose.yml`, and shell scripts against the
-  subject's requirements, to spot gaps and configuration mistakes (for example, the missing
-  `image:` names and the MariaDB restart issue described below).
-- Drafting this README and the `USER_DOC.md` / `DEV_DOC.md` files from the actual project
-  configuration.
 - Preparing a personal revision document listing the commands and concepts needed for the
   defense.
-
-The AI did not write the Dockerfiles, the shell scripts, or the `docker-compose.yml` — those
-were written and configured manually. Every suggestion coming from the AI review was read,
-understood, and only applied after being checked against the subject and, where relevant,
-tested or discussed with a peer, in line with the project's AI usage guidelines.
 
 ## Project description: Docker usage and design choices
 
