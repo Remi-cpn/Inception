@@ -7,6 +7,7 @@ chown -R mysql:mysql /run/mysqld
 
 if [ ! -d /var/lib/mysql/wordpress ]; then
 	envsubst < /usr/local/bin/init.sql.template > /tmp/init.sql
+	exec mariadbd --init-file=/tmp/init.sql
 fi
 
-exec mariadbd --init-file=/tmp/init.sql
+exec mariadbd
