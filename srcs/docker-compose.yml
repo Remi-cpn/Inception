@@ -31,6 +31,15 @@ services:
       - mariadb
     env_file: .env
     restart: on-failure
+  static-site:
+    container_name: static-site
+    image: static-site:inception
+    build: ./requirements/bonus/static-site
+    networks:
+      - inception
+    ports:
+      - "81:81"
+    restart: on-failure
 
 networks:
   inception:

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV - Remi Compain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;600;700&family=Barlow:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --dark:    #0F1117;
+    --dark2:   #181C26;
+    --teal:    #0DCFAA;
+    --teal-dim:#0A9C81;
+    --white:   #F5F4F0;
+    --muted:   #8B9299;
+    --border:  rgba(255,255,255,0.07);
+    --right-bg:#F9F8F5;
+    --text:    #1A1C22;
+    --text2:   #5A5F6A;
+  }
+
+  html { font-size: 13px; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: #E0DDD6;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+
+  /* A4 strict */
+  .page {
+    width: 794px;
+    height: 1123px;
+    display: flex;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.28);
+    border-radius: 3px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  /* ════ LEFT ════ */
+  .left {
+    width: 256px;
+    flex-shrink: 0;
+    background: var(--dark);
+    padding: 30px 24px 26px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .left::before {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 2px; height: 100%;
+    background: linear-gradient(to bottom, transparent, var(--teal) 25%, var(--teal) 75%, transparent);
+    opacity: 0.35;
+  }
+
+  /* Photo */
+  .photo-wrap { display: flex; flex-direction: column; align-items: center; gap: 11px; }
+  .photo-frame {
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    border: 2.5px solid var(--teal);
+    overflow: hidden; flex-shrink: 0; background: #1C2030;
+  }
+  .photo-frame svg, .photo-frame img { width: 100%; height: 100%; display: block; object-fit: cover; }
+  .name-block { text-align: center; }
+  .name-first { display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 300; font-size: 20px; letter-spacing: 0.12em; color: var(--white); text-transform: uppercase; }
+  .name-last  { display: block; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: 0.08em; color: var(--teal); text-transform: uppercase; line-height: 1; }
+  .role-tag   { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--teal-dim); letter-spacing: 0.04em; margin-top: 4px; display: block; }
+
+  /* Section label */
+  .s-label {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 9.5px;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--teal);
+    margin-bottom: 5px; display: flex; align-items: center; gap: 7px;
+  }
+  .s-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* Contact */
+  .contact-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+  .contact-list li { display: flex; align-items: center; gap: 8px; }
+  .c-icon { width: 20px; height: 20px; border-radius: 4px; background: rgba(13,207,170,0.1); border: 1px solid rgba(13,207,170,0.2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .c-icon svg { width: 10px; height: 10px; stroke: var(--teal); fill: none; stroke-width: 2; }
+  .contact-list li span, .contact-list li a { font-size: 12px; color: #A8AEB8; line-height: 1.3; text-decoration: none; }
+
+  /* Bloc adaptabilité */
+  .adapt-block { background: linear-gradient(135deg, #F0F9F6 0%, #F9F8F5 100%); border: 1px solid rgba(13,207,170,0.25); border-radius: 5px; padding: 11px 14px; margin-top: 10px; }
+  .adapt-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--teal-dim); margin-bottom: 5px; display: flex; align-items: center; gap: 7px; }
+  .adapt-title::before { content: '⟳'; font-size: 11px; color: var(--teal); }
+  .adapt-text { font-size: 10.5px; color: var(--text2); line-height: 1.65; }
+
+  /* Outils */
+  .tool-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tool-tag {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 10px; font-family: 'JetBrains Mono', monospace;
+    color: var(--teal-dim); background: rgba(13,207,170,0.07);
+    border: 1px solid rgba(13,207,170,0.15);
+    padding: 3px 7px; border-radius: 3px;
+  }
+  /* Langues parlées */
+  .lng-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .lng-name { font-size: 11.5px; color: var(--white); }
+  .dots { display: flex; gap: 3px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .dot.f { background: var(--teal); }
+  .dot.e { background: rgba(255,255,255,0.1); }
+
+  /* Certifications */
+  .cert-item { margin-bottom: 7px; }
+  .cert-label { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--teal-dim); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
+  .cert-val { font-size: 11px; color: #A8AEB8; line-height: 1.4; }
+
+  /* Compétences */
+  .comp-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .comp-list li { font-size: 10.5px; color: #8B9299; display: flex; align-items: center; gap: 7px; }
+  .comp-list li::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--teal-dim); flex-shrink: 0; }
+
+  /* QR Github */
+  .qr-block { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .qr-frame {
+    width: 170px; height: 170px;
+    border: 1.5px solid rgba(13,207,170,0.3);
+    border-radius: 5px; padding: 5px;
+    background: rgba(255,255,255,0.02);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .qr-url { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: #5A6070; text-align: center; }
+
+  /* ════ RIGHT ════ */
+  .right {
+    flex: 1;
+    background: var(--right-bg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Seeking Banner */
+  .seeking-banner {
+    background: var(--dark2); border-bottom: 2px solid var(--teal);
+    padding: 14px 26px;
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    flex-shrink: 0;
+  }
+  .seeking-main { display: flex; align-items: center; gap: 11px; }
+  .pulse-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--teal); flex-shrink: 0; position: relative; }
+  .pulse-dot::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1.5px solid var(--teal); opacity: 0; animation: ripple 2s ease-out infinite; }
+  @keyframes ripple { 0% { opacity: 0.6; transform: scale(0.8); } 100% { opacity: 0; transform: scale(1.8); } }
+  .seeking-text { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 21px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--white); }
+  .seeking-text span { color: var(--teal); }
+  .seeking-meta { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--teal-dim); text-align: right; line-height: 1.5; }
+
+  /* Content */
+  .content-pad {
+    padding: 20px 26px;
+    display: flex; flex-direction: column; gap: 16px;
+    flex: 1; overflow: hidden;
+  }
+
+  .tagline { font-size: 12px; color: var(--text2); line-height: 1.68; padding-bottom: 14px; border-bottom: 1px solid #E2E0D8; }
+
+  .r-label {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 10.5px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--text2);
+    margin-bottom: 15px; margin-top: 0px; display: flex; align-items: center; gap: 9px;
+  }
+  .r-label::before { content: ''; width: 12px; height: 2px; background: var(--teal); border-radius: 1px; }
+
+  /* 42 Card */
+  .card-42 {
+    background: var(--dark); border-radius: 7px;
+    border: 1px solid rgba(13,207,170,0.25);
+    padding: 14px 16px; margin-bottom: 16px;
+    position: relative; overflow: hidden;
+  }
+  .card-42::before {
+    content: ''; position: absolute; right: 8px; top: 8px;
+    width: 80px; height: 80px;
+	background: url('42-logo.jpg') center/contain no-repeat;
+    opacity: 0.07; pointer-events: none;
+  }
+  .card-42-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+  .card-42-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; color: var(--white); text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.1; }
+  .card-42-sub { font-size: 11px; color: var(--teal-dim); margin-top: 3px; }
+  .card-42-badge { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--teal); background: rgba(13,207,170,0.1); border: 1px solid rgba(13,207,170,0.3); padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
+  .card-42-desc { font-size: 12px; color: #8B9299; line-height: 1.62; margin-bottom: 10px; }
+
+  /* Projets dans la card */
+  .card-42-projects { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .proj-pill {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: var(--white); background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 3px 7px; border-radius: 3px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .proj-pill::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+
+  .card-42-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px; }
+  .stat-block { text-align: center; }
+  .stat-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; color: var(--teal); display: block; line-height: 1; }
+  .stat-lbl { font-size: 8.5px; color: #5A6070; display: block; margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+
+  /* Formations autres */
+  .edu-item { display: grid; grid-template-columns: 92px 1fr; gap: 0 11px; margin-bottom: 7px; }
+  .edu-date { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--text2); padding-top: 2px; line-height: 1.5; }
+  .edu-title { font-weight: 500; font-size: 12px; color: var(--text); line-height: 1.3; }
+  .edu-sub { font-size: 10.5px; color: var(--text2); margin-top: 1px; }
+
+  /* Expériences */
+  .exp-item { display: grid; grid-template-columns: 92px 1fr; gap: 0 11px; margin-bottom: 11px; padding-bottom: 11px; border-bottom: 1px solid #EDECEA; }
+  .exp-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .exp-date { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--text2); line-height: 1.5; padding-top: 2px; }
+  .exp-date .dur { font-size: 9px; color: #B0B5BE; margin-top: 2px; }
+  .exp-title { font-weight: 500; font-size: 12.5px; color: var(--text); margin-bottom: 2px; }
+  .exp-company { font-size: 10.5px; color: var(--teal-dim); margin-bottom: 6px; }
+  .exp-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .exp-tag { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: #5A5F6A; background: #EDECEA; border: 1px solid #DDDBD3; padding: 2px 8px; border-radius: 3px; }
+
+  /* Footer */
+  .cv-footer { padding: 4px 26px; border-top: 1px solid #E2E0D8; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+  .footer-note { font-size: 9.5px; color: #BABDB8; font-family: 'JetBrains Mono', monospace; }
+
+  @media print {
+    body { background: none; padding: 0; }
+    .page { box-shadow: none; border-radius: 0; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ═══ LEFT ═══ -->
+  <aside class="left">
+
+    <!-- Photo -->
+    <div class="photo-wrap">
+      <div class="photo-frame">
+		<img src="photo.jpeg" style="width:100%;height:100%;object-fit:cover;display:block;">
+      </div>
+      <div class="name-block">
+        <span class="name-first">Rémi</span>
+        <span class="name-last">Compain</span>
+		<span class="role-tag">31ans</span>
+        <span class="role-tag">// dev · alternance/stage 2026</span>
+      </div>
+    </div>
+
+    <!-- Contact -->
+    <div>
+      <div class="s-label">Contact</div>
+      <ul class="contact-list">
+        <li>
+          <div class="c-icon"><svg viewBox="0 0 16 16"><rect x="1" y="3" width="14" height="10" rx="2"/><polyline points="1,3 8,9 15,3"/></svg></div>
+          <span>r.compain@outlook.fr</span>
+        </li>
+        <li>
+          <div class="c-icon"><svg viewBox="0 0 16 16"><path d="M3 3h10v10H3z"/><path d="M5 7h6M5 10h4"/></svg></div>
+          <span>06 31 53 90 18</span>
+        </li>
+        <li>
+          <div class="c-icon"><svg viewBox="0 0 16 16"><path d="M8 1C4.7 1 2 3.7 2 7c0 2.3 1.3 4.3 3.2 5.4L8 15l2.8-2.6C12.7 11.3 14 9.3 14 7c0-3.3-2.7-6-6-6z"/><circle cx="8" cy="7" r="2"/></svg></div>
+          <span>Angoulême (16)</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Outils -->
+    <div>
+      <div class="s-label">Outils &amp; Env.</div>
+      <div class="tool-tags">
+		<span class="tool-tag">Git</span>
+		<span class="tool-tag">Linux</span>
+		<span class="tool-tag">Bash</span>
+		<span class="tool-tag">Makefile</span>
+        <span class="tool-tag">Valgrind</span>
+		<span class="tool-tag">Docker</span>
+		<span class="tool-tag">IA</span>
+        <span class="tool-tag">VS.Code</span>
+        <span class="tool-tag">Vim</span>
+      </div>
+    </div>
+
+    <!-- Langues parlées -->
+    <div>
+      <div class="s-label">Langues</div>
+      <div class="lng-item">
+        <span class="lng-name">Français</span>
+        <div class="dots"><div class="dot f"></div><div class="dot f"></div><div class="dot f"></div><div class="dot f"></div><div class="dot f"></div></div>
+      </div>
+      <div class="lng-item">
+        <span class="lng-name">Anglais</span>
+        <div class="dots"><div class="dot f"></div><div class="dot f"></div><div class="dot f"></div><div class="dot e"></div><div class="dot e"></div></div>
+      </div>
+    </div>
+
+    <!-- Certifications -->
+    <div>
+      <div class="s-label">Certifications</div>
+      <div class="cert-item">
+        <div class="cert-label">Permis</div>
+        <div class="cert-val">B, BE, C · Fimo, ADR</div>
+      </div>
+      <div class="cert-item">
+        <div class="cert-label">Secourisme</div>
+        <div class="cert-val">SST, SC1</div>
+      </div>
+    </div>
+
+    <!-- Compétences -->
+    <div>
+      <div class="s-label">Compétences</div>
+      <ul class="comp-list">
+		<li>Rigeur &amp; précision</li>
+        <li>Management &amp; leadership</li>
+        <li>Gestion de projet</li>
+		<li>Lecture de plans &amp; schémas</li>
+        <li>Résolution de problèmes</li>
+        <li>Gestion de crise</li>
+        <li>Autonomie &amp; initiative</li>
+        <li>Adaptabilité rapide</li>
+		<li>Travail en équipe</li>
+		<li>Pédagogie</li>
+      </ul>
+    </div>
+
+    <!-- QR GitHub -->
+    <div class="qr-block">
+      <div class="s-label" style="width:100%;margin-bottom:5px;">GitHub</div>
+      <div class="qr-frame">
+        <img src="QRcode.png" style="width:125px;height:125px;object-fit:contain;border-radius:4px;">
+      </div>
+      <div class="qr-url">github.com/<span style="color:var(--teal-dim);">Remi-cpn</span></div>
+    </div>
+
+  </aside>
+
+  <!-- ═══ RIGHT ═══ -->
+  <main class="right">
+
+    <div class="seeking-banner">
+      <div class="seeking-main">
+        <div class="pulse-dot"></div>
+        <div class="seeking-text">Recherche <span>Alternance / Stage</span> —<br> Développeur Embarqué</div>
+      </div>
+      <div class="seeking-meta">École 42 · Angoulême<br>Disponible septembre 2026</div>
+    </div>
+
+    <div class="content-pad">
+
+	<!-- Descritpion -->
+      <p class="tagline">
+		Développeur en formation à l'École 42 d'Angoulême, fort d'un parcours atypique : cinq ans dans l'armée 
+		au contact de matériels et systèmes électroniques opérationnels, trois ans chef de chantier et une année 
+		d'entrepreneuriat. Ces expériences exigeantes m'ont forgé une rigueur et un goût pour la résolution de 
+		problèmes concrets. Je me tourne aujourd'hui vers le développement embarqué, attiré par la programmation 
+		bas niveau en C/C++ et le lien direct entre code et matériel.</p>
+
+      <!-- Formation -->
+      <div>
+        <div class="r-label">Formations</div>
+
+        <div class="card-42">
+          <div class="card-42-header">
+            <div>
+              <div class="card-42-title">École 42 · Angoulême</div>
+              <div class="card-42-sub">Programmation informatique · oct. 2025</div>
+            </div>
+            <div class="card-42-badge">● En cours</div>
+          </div>
+
+          <div class="card-42-desc">
+
+			<b>Autonomie</b>, <b>rigueur</b> et <b>travail en équipe</b> sont au 
+			cœur de chaque projet.
+          </div>
+
+          <div class="card-42-projects">
+            <span class="proj-pill">Milestone 1-5</span>
+            <span class="proj-pill">push-swap</span>
+            <span class="proj-pill">minishell</span>
+			<span class="proj-pill">philosophers</span>
+            <span class="proj-pill">miniRT</span>
+          </div>
+
+          <div class="card-42-stats">
+            <div class="stat-block">
+              <span class="stat-val">70%</span>
+              <span class="stat-lbl">du tronc commun</span>
+            </div>
+            <div class="stat-block">
+              <!-- Mets ton vrai nombre de projets réalisés ici -->
+              <span class="stat-val">18</span>
+              <span class="stat-lbl">projets réalisés</span>
+            </div>
+            <div class="stat-block">
+              <span class="stat-val">2026</span>
+              <span class="stat-lbl">fin de cursus</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="edu-item">
+          <div class="edu-date">2021 – 2022</div>
+          <div>
+            <div class="edu-title">Marketing Digital &amp; E-Commerce</div>
+            <div class="edu-sub">Auto-Entrepreneur · Formation pratique</div>
+          </div>
+        </div>
+
+        <div class="edu-item">
+          <div class="edu-date">2013 – 2015</div>
+          <div>
+            <div class="edu-title">BTS Conception de Produits Industriels</div>
+            <div class="edu-sub">Lycée Monteil · Rodez (12)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Langages ── -->
+	  <div>
+	  <div class="r-label">Langages</div>
+
+        <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:center;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+			<img src="C-logo.png" width="24" height="24" style="border-radius:3px;object-fit:contain;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#8B8880;">C</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <img src="C++logo.png" width="24" height="24" style="border-radius:3px;object-fit:contain;">
+			<span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#8B8880;">C++</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <img src="CSharp-logo.png" width="24" height="24" style="border-radius:3px;object-fit:contain;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#8B8880;">C#</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <img src="Shell-logo.png" width="24" height="24" style="border-radius:3px;object-fit:contain;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#8B8880;">Shell</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <img src="Python-logo.png" width="24" height="24" style="border-radius:3px;object-fit:contain;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#8B8880;">Python</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <img src="HTML-logo.png" width="24" height="24" style="border-radius:3px;object-fit:contain;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#8B8880;">HTML</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <img src="CSS-logo.png" width="24" height="24" style="border-radius:3px;object-fit:contain;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:8px;color:#8B8880;">CSS</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expériences -->
+      <div>
+        <div class="r-label">Expériences professionnelles</div>
+
+		<div class="exp-item">
+          <div class="exp-date">2015 – 2016<div class="dur">1 ans</div></div>
+          <div>
+            <div class="exp-title">Bureau d'étude</div>
+            <div class="exp-company">Innovep · Rodez (12)</div>
+            <div class="exp-tags">
+              <span class="exp-tag">Maîtrise de CAO </span>
+              <span class="exp-tag">Lecture de plans</span>
+              <span class="exp-tag">Coordination</span>
+            </div>
+          </div>
+        </div>
+
+		<div class="exp-item">
+          <div class="exp-date">2016 – 2021<div class="dur">5 ans</div></div>
+          <div>
+            <div class="exp-title">Militaire sous contrat</div>
+            <div class="exp-company">Armée de Terre · RICM, Poitiers (86)</div>
+            <div class="exp-tags">
+			  <span class="exp-tag">Matériels &amp; systèmes électroniques</span>
+			  <span class="exp-tag">Environnements contraints</span>
+              <span class="exp-tag">Gestion de crise</span>
+              <span class="exp-tag">OPEX</span>
+              <span class="exp-tag">Rigueur</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-date">2022 – 2025<div class="dur">3 ans</div></div>
+          <div>
+            <div class="exp-title">Chef de Chantier VRD</div>
+            <div class="exp-company">Eurovia · Poitiers (86)</div>
+            <div class="exp-tags">
+              <span class="exp-tag">Management</span>
+              <span class="exp-tag">Gestion de projet</span>
+              <span class="exp-tag">Travail en équipe</span>
+              <span class="exp-tag">Suivi budgétaire</span>
+              <span class="exp-tag">Relation client</span>
+            </div>
+          </div>
+        </div>
+
+		<!-- Bloc adaptabilité -->
+        <div class="adapt-block">
+          <div class="adapt-title">Adaptabilité &amp; apprentissage</div>
+          <p class="adapt-text">
+            Mon parcours m'a habitué à maîtriser rapidement de nouveaux environnements et outils. 
+			Je n'hésite pas à prendre en main un langage ou une technologie que je ne connais pas, à 
+			décortiquer sa logique, et à produire un résultat solide dans de courts délais. Cette capacité 
+			d'apprentissage autonome, combinée à mon contact direct avec du matériel en conditions opérationnelles,
+			me pousse aujourd'hui à me tourner sérieusement vers le développement embarqué.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="cv-footer">
+      <span class="footer-note"></span>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>
