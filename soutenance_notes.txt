@@ -1,0 +1,315 @@
+===============================================================================
+INCEPTION - NOTES DE SOUTENANCE (rcompain)
+Document personnel de revision, base sur inception.pdf (sujet v5.3) et la grille
+officielle 42evalhub.com/common/inception. Non destine a etre rendu.
+===============================================================================
+
+
+-------------------------------------------------------------------------------
+0. A CORRIGER AVANT LA SOUTENANCE (bloquant, cause un arret immediat de l'eval)
+-------------------------------------------------------------------------------
+
+[BLOQUANT 1] Nom des images Docker
+  Grille : "The Docker images must have the same name as their corresponding
+  service. Otherwise, the evaluation process ends now."
+  Etat actuel : docker-compose.yml n'a pas de cle "image:" -> Compose nomme les
+  images "srcs-nginx", "srcs-mariadb", "srcs-wordpress" (prefixees), pas
+  "nginx"/"mariadb"/"wordpress".
+  Fix : ajouter sous chaque service, ex.
+      image: nginx:inception
+      image: mariadb:inception
+      image: wordpress:inception
+  (jamais de tag "latest", interdit par le sujet).
+
+[BLOQUANT 2] Redemarrage de MariaDB apres recreation du conteneur
+  Grille, section "Persistence!" : reboot de la VM, puis on relance
+  docker compose, tout doit remarcher SANS rien perdre.
+  Bug : srcs/requirements/mariadb/tools/init_mariadb.sh genere /tmp/init.sql
+  uniquement si /var/lib/mysql/wordpress n'existe pas, MAIS lance ensuite
+  "exec mariadbd --init-file=/tmp/init.sql" dans tous les cas. Au 2e lancement
+  (conteneur recree, volume deja rempli), /tmp/init.sql n'existe plus dans le
+  nouveau conteneur -> mariadbd plante au demarrage -> "the evaluation process
+  ends now".
+  Fix : sortir le exec du if/else, ne passer --init-file que si on vient de
+  generer le fichier.
+
+  Verifier aussi apres le fix : simuler le cas avec
+      make down && make        (conteneurs recrees, volume conserve)
+  et controler "docker logs mariadb" + "make ps" -> tout doit etre "Up".
+
+
+-------------------------------------------------------------------------------
+1. DEROULE EXACT DE LA CORRECTION (d'apres la grille officielle)
+-------------------------------------------------------------------------------
+
+Avant de commencer, l'evaluateur nettoie TOUT sur la machine :
+  docker stop $(docker ps -qa); docker rm $(docker ps -qa);
+  docker rmi -f $(docker images -qa); docker volume rm $(docker volume ls -q);
+  docker network rm $(docker network ls -q) 2>/dev/null
+
+  -> il faut que TOUT se reconstruise en partant de rien (pas de layers en
+     cache d'une correction precedente). "make" doit suffire.
+
+Verifications preliminaires (fatales si KO) :
+  - pas de "network: host" ni "links:" dans docker-compose.yml
+  - il y a bien un/des "network(s)" defini(s) dans docker-compose.yml
+  - pas de "--link" dans le Makefile ou les scripts
+  - aucun ENTRYPOINT avec "tail -f", process en arriere-plan (ex: "nginx &
+    bash"), ou "bash"/"sh" utilise autrement que pour lancer un script
+  - chaque Dockerfile part de l'avant-derniere version stable d'Alpine ou
+    Debian (FROM debian:XXXXX ou FROM alpine:X.X.X, ou une image locale)
+  - aucun script ne fait de boucle infinie (sleep infinity, tail -f /dev/null,
+    tail -f /dev/random, while true, etc.)
+  - "make" doit tourner sans erreur
+
+Puis, dans l'ordre :
+
+  1) Activity overview -> questions orales (voir section 3)
+  2) README check :
+       - README.md present a la racine
+       - 1ere ligne en italique EXACTEMENT :
+         "This project has been created as part of the 42 curriculum by
+         rcompain." (deja fait dans README.md)
+       - sections Description / Instructions / Resources (avec explication
+         de l'usage de l'IA) presentes
+  3) Documentation check :
+       - USER_DOC.md et DEV_DOC.md presents et non vides a la racine
+  4) Simple setup :
+       - nginx accessible uniquement sur le port 443
+       - certificat SSL/TLS utilise
+       - le site WordPress est deja installe et configure (PAS de page
+         d'installation WordPress visible) sur https://rcompain.42.fr
+       - http://rcompain.42.fr (port 80) NE DOIT PAS repondre
+  5) Docker Basics :
+       - 1 Dockerfile par service, non vide
+       - Dockerfiles ecrits soi-meme, pas d'image toute faite (sauf
+         alpine/debian de base)
+       - FROM = avant-derniere version stable d'alpine/debian
+       - image == nom du service (voir BLOQUANT 1)
+       - tout est monte via "docker compose" par le Makefile, sans crash
+  6) Docker Network :
+       - docker-network utilise dans docker-compose.yml
+       - "docker network ls" fait apparaitre le reseau
+       - explication simple demandee (voir section 3)
+  7) NGINX + SSL/TLS :
+       - Dockerfile present, conteneur cree (docker compose ps)
+       - port 80 injoignable, port 443 OK avec TLSv1.2/1.3
+       - certificat auto-signe accepte (warning navigateur normal)
+  8) WordPress + php-fpm + volume :
+       - Dockerfile present, pas de nginx dedans
+       - conteneur cree
+       - volume verifie via :
+             docker volume ls
+             docker volume inspect <nom_du_volume>
+         -> le chemin doit contenir "/home/rcompain/data/"
+       - poster un commentaire avec l'utilisateur WordPress "normal" (WP_USER)
+       - se connecter en admin (username SANS "admin"/"administrator")
+       - modifier une page depuis l'admin -> verifier que ca change sur le
+         site public
+  9) MariaDB + volume :
+       - Dockerfile present, pas de nginx dedans
+       - conteneur cree, volume verifie comme au-dessus
+       - savoir expliquer comment se connecter a la base (voir section 2)
+       - la base ne doit pas etre vide
+ 10) Persistence! :
+       - reboot de la VM (sudo reboot)
+       - relancer docker compose (make) une fois la VM repartie
+       - tout doit refonctionner, WordPress et MariaDB deja configures, les
+         modifs faites avant (page editee, commentaire poste) doivent
+         toujours etre la
+       -> c'est le test qui declenche le BLOQUANT 2 si non corrige
+ 11) Configuration modification (live, pendant la soutenance) :
+       - l'evaluateur choisit un service et demande de changer un port
+       - il faut modifier la config, RECONSTRUIRE et RELANCER, et le service
+         doit continuer a fonctionner avec le nouveau port
+       -> s'entrainer avant (voir section 4)
+
+
+-------------------------------------------------------------------------------
+2. COMMANDES A CONNAITRE PAR COEUR
+-------------------------------------------------------------------------------
+
+Cycle de vie du projet :
+  make                     # up : cree /home/rcompain/data + docker compose up -d --build
+  make down                # docker compose down (garde les volumes)
+  make clean               # docker compose down -v (supprime les volumes)
+  make fclean               # clean + sudo rm -rf /home/rcompain/data
+  make re                  # clean + up
+  make logs / make ps
+
+Docker generique :
+  docker ps -a
+  docker images
+  docker network ls
+  docker volume ls
+  docker volume inspect <volume>
+  docker inspect <container>
+  docker logs <container>
+  docker logs -f <container>
+  docker exec -it <container> bash
+  docker stats
+
+Docker compose (depuis la racine, ou avec -f srcs/docker-compose.yml) :
+  docker compose -f srcs/docker-compose.yml up -d --build
+  docker compose -f srcs/docker-compose.yml up -d --build <service>   # 1 seul service
+  docker compose -f srcs/docker-compose.yml ps
+  docker compose -f srcs/docker-compose.yml logs -f <service>
+  docker compose -f srcs/docker-compose.yml down / down -v
+  docker compose -f srcs/docker-compose.yml config     # verifie/affiche la config resolue
+
+Se connecter a MariaDB (a savoir expliquer et faire en live) :
+  docker exec -it mariadb bash
+  mariadb -u root -p                       # puis mot de passe MYSQL_ROOT_PASSWORD
+  mariadb -u $MYSQL_USER -p $MYSQL_DATABASE
+  -- une fois dans le client SQL :
+  SHOW DATABASES;
+  USE wordpress;              -- ou le nom de MYSQL_DATABASE
+  SHOW TABLES;
+  SELECT user, host FROM mysql.user;
+  SELECT user_login, user_email FROM wp_users;   -- verifier les 2 comptes WP
+
+Nettoyage complet (comme le fait l'evaluateur avant de commencer) :
+  docker stop $(docker ps -qa); docker rm $(docker ps -qa)
+  docker rmi -f $(docker images -qa)
+  docker volume rm $(docker volume ls -q)
+  docker network rm $(docker network ls -q) 2>/dev/null
+
+
+-------------------------------------------------------------------------------
+3. NOTIONS A SAVOIR EXPLIQUER SIMPLEMENT (questions orales attendues)
+-------------------------------------------------------------------------------
+
+Q: Comment fonctionnent Docker et docker compose ?
+A: Docker construit une image (systeme de fichiers + config) a partir d'un
+   Dockerfile, puis lance cette image comme conteneur : un processus isole
+   (namespaces + cgroups) qui partage le noyau de la machine hote, contrairement
+   a une VM. docker compose lit un fichier YAML (docker-compose.yml) qui decrit
+   plusieurs services/conteneurs, leurs volumes et leur reseau, et les
+   orchestre en une seule commande (build, creation du reseau, des volumes,
+   demarrage dans le bon ordre via depends_on).
+
+Q: Difference entre une image Docker utilisee avec ou sans docker compose ?
+A: L'image elle-meme est identique (construite par le meme Dockerfile). Sans
+   compose, il faut lancer "docker build" et "docker run" a la main pour
+   chaque conteneur, creer le reseau et les volumes soi-meme, et gerer les
+   dependances entre conteneurs manuellement. Avec compose, tout est declare
+   dans un seul fichier et gere par un seul outil (build, network, volumes,
+   ordre de demarrage, restart policy) : plus simple, reproductible, versionne.
+
+Q: Quel est l'interet de Docker par rapport a une VM ?
+A: Une VM virtualise un materiel complet + un OS invite via un hyperviseur :
+   lourd, lent a demarrer, gourmand en RAM/disque. Un conteneur Docker partage
+   le noyau de l'hote et n'isole que le processus/le systeme de fichiers/le
+   reseau : demarrage quasi instantane, tres leger, on peut faire tourner
+   beaucoup plus de conteneurs que de VMs sur la meme machine. Ici, la VM sert
+   uniquement d'hote pour Docker ; chaque service (nginx, wordpress, mariadb)
+   est un conteneur, pas une VM a part entiere.
+
+Q: Pertinence de l'arborescence imposee par le sujet ?
+A: srcs/ regroupe tout ce qui configure l'appli (compose + .env + un dossier
+   par service sous requirements/), separe du Makefile a la racine qui pilote
+   tout. Chaque service a son propre Dockerfile + conf/ + tools/ : ca isole
+   clairement la responsabilite de chaque conteneur (1 Dockerfile = 1 service
+   = 1 image = 1 conteneur), facilite la maintenance et empeche de melanger
+   les responsabilites (ex: pas de nginx dans le Dockerfile wordpress).
+
+Q: Explique le docker-network utilise.
+A: Un reseau bridge dedie ("inception") declare dans docker-compose.yml. Les
+   3 conteneurs y sont rattaches et peuvent se joindre par leur nom de service
+   (DNS interne de Docker) : wordpress parle a "mariadb:3306", nginx parle a
+   "wordpress:9000". Le reseau isole ces echanges du reseau de l'hote ; seul
+   nginx publie un port vers l'hote (443). "network: host" ou "--link" sont
+   interdits car ils cassent cette isolation / sont obsoletes.
+
+Q: Secrets vs variables d'environnement ?
+A: Les variables d'env (.env, env_file) sont simples mais visibles via
+   "docker inspect" ou dans l'environnement du process. Les secrets Docker
+   sont montes comme fichiers dans /run/secrets/, pas exposes par
+   "docker inspect". Le sujet accepte les deux (le .env est autorise par la
+   grille d'evaluation), les secrets sont "fortement recommandes" pour les
+   vraies infos sensibles.
+
+Q: Volumes Docker vs bind mounts ?
+A: Un bind mount pointe directement vers un chemin arbitraire de l'hote, gere
+   en dehors de Docker. Un volume nomme est cree et gere par Docker
+   ("docker volume ls/inspect"), reference par son nom dans le compose. Le
+   sujet impose des volumes nommes (pas de bind mount direct) mais impose
+   aussi que la donnee soit physiquement dans /home/rcompain/data : on
+   concilie les deux avec "driver_opts" (type: none, o: bind, device: ...)
+   sur un volume nomme "local" -> Docker le traite comme un vrai volume nomme,
+   mais les donnees vivent au bon endroit sur l'hote.
+
+Q: Pourquoi mariadbd/php-fpm/nginx sont lances avec "exec" en fin de script ?
+A: "exec" remplace le processus shell courant par le processus final au lieu
+   de le lancer en sous-processus : le process principal (nginx, mariadbd,
+   php-fpm) devient PID 1 dans le conteneur, recoit correctement les signaux
+   (SIGTERM de "docker stop"), et le conteneur s'arrete proprement. Sans exec,
+   le shell reste PID 1 et le vrai service ne recoit pas les signaux
+   correctement -> conteneur qui ne s'arrete pas proprement, ou daemon zombie.
+
+Q: Pourquoi pas de "tail -f" / "sleep infinity" / boucle infinie en entrypoint ?
+A: Un conteneur doit rester vivant parce que son processus principal (PID 1)
+   est un vrai processus qui tourne en avant-plan (ex: "nginx -g 'daemon
+   off;'"), pas parce qu'on triche avec une commande qui ne fait rien. Ces
+   patches masquent des daemons qui forkent en arriere-plan (mauvaise
+   pratique, le conteneur croit que tout va bien alors que le vrai service a
+   pu crasher) et empechent une gestion propre du cycle de vie/signaux.
+
+Q: TLSv1.2/1.3, pourquoi et comment ?
+A: nginx.conf force "ssl_protocols TLSv1.2 TLSv1.3;" pour interdire les
+   versions plus anciennes et vulnerables (SSLv3, TLSv1.0/1.1). Le certificat
+   est auto-signe (genere avec openssl au build de l'image nginx), donc le
+   navigateur affiche un avertissement (normal, pas une vraie autorite de
+   certification), mais la connexion est bien chiffree en TLS 1.2/1.3.
+
+
+-------------------------------------------------------------------------------
+4. S'ENTRAINER : MODIFICATION DE CONFIGURATION EN DIRECT
+-------------------------------------------------------------------------------
+
+L'evaluateur peut demander de changer le port d'un service. Exemple avec nginx
+(443 -> 8443) :
+
+  1. srcs/docker-compose.yml : section nginx -> ports:
+         - "8443:443"
+     (le port interne du conteneur peut rester 443, seul le port hote change ;
+     si on demande de changer le port INTERNE, modifier aussi nginx.conf
+     "listen" et le Dockerfile "EXPOSE")
+
+  2. Si le port interne change, editer aussi
+     srcs/requirements/nginx/conf/nginx.conf : "listen <nouveau_port> ssl;"
+     et srcs/requirements/nginx/Dockerfile : "EXPOSE <nouveau_port>"
+
+  3. Rebuild + relance :
+         docker compose -f srcs/docker-compose.yml up -d --build nginx
+     ou plus simplement :
+         make re
+
+  4. Verifier :
+         docker compose -f srcs/docker-compose.yml ps
+         curl -vk https://rcompain.42.fr:8443/
+
+S'entrainer aussi sur wordpress (port php-fpm 9000) et mariadb (port 3306) au
+cas ou l'evaluateur choisisse un autre service : il faut changer le port dans
+le Dockerfile/conf concerne(e), ET dans le fichier qui s'y connecte (ex:
+fastcgi_pass dans nginx.conf si on change le port de wordpress).
+
+
+-------------------------------------------------------------------------------
+5. POINTS A DOUBLE-CHECKER AVANT LA SOUTENANCE
+-------------------------------------------------------------------------------
+
+[ ] docker-compose.yml : ajouter "image: <service>:inception" a chaque service
+[ ] init_mariadb.sh : corriger le exec --init-file conditionnel (voir section 0)
+[ ] .env reel : WP_ADMIN_USER ne contient ni "admin" ni "administrator"
+[ ] Faire un test "make down && make" et verifier que les 3 conteneurs sont
+    "Up" et que le site + les donnees sont toujours la
+[ ] Idealement, tester un vrai reboot de VM avant la vraie soutenance
+[ ] Verifier que http://rcompain.42.fr ne repond pas (seulement https/443)
+[ ] Verifier qu'aucun mot de passe/identifiant ne traine dans le repo git
+    (git log, git show, grep -r sur les fichiers versionnes) - seul .env
+    (non versionne) doit contenir les vraies valeurs
+[ ] README.md / USER_DOC.md / DEV_DOC.md a jour et pousses sur le repo
+[ ] Savoir ouvrir une session mariadb et lister les tables/users en live
+[ ] Savoir poster un commentaire avec WP_USER et editer une page avec l'admin
+[ ] S'entrainer a changer un port et rebuild en live (section 4)
